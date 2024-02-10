@@ -12,7 +12,6 @@ import {
     RouterProvider,
     Route,
 } from "react-router-dom";
-import { HashRouter as Router } from "react-router-dom";
 
 const routes = createRoutesFromElements(
     <Route>
@@ -29,7 +28,7 @@ const router = createBrowserRouter(routes);
 function App() {
     return (
         <>
-            <RouterProvider router={Router} />
+            <RouterProvider router={router} />
         </>
     );
 }
