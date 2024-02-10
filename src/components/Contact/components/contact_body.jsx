@@ -1,12 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Copyright from "../../Homepage/copyright";
 import { useState } from "react";
+import L from "leaflet"; // Import Leaflet library
+import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
+import { MapContainer, TileLayer } from "react-leaflet"; // Import React-Leaflet components
+import { Icon } from "leaflet";
+
+// Define a custom icon for the marker
+const markerIcon = new Icon({
+    iconUrl: "marker-icon.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+});
 
 export default function ContactBody() {
     const [name, setName] = useState(["HoneeBee", "Butterfly"]);
     const [email, setEmail] = useState("");
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
+
+    useEffect(() => {
+        const map = L.map("map").setView([32.331528, -86.243504], 18);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution:
+                'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+            maxZoom: 20
+        }).addTo(map);
+
+        L.marker([32.331528, -86.243504] ).addTo(map);
+
+        return () => {
+            // Clean up the map when component unmounts
+            map.remove();
+        };
+    }, []);
 
     function handleEmail(event) {
         const name = event.target.value;
@@ -15,24 +43,24 @@ export default function ContactBody() {
         } else if (name === "Butterfly") {
             setEmail("writatee@gmail.com");
         }
-    };
-    
+    }
+
     function handleSubjectChange(event) {
         setSubject(event.target.value);
-    };
+    }
 
     function handleMessageChange(event) {
         setMessage(event.target.value);
-    };
-    
+    }
+
     function handleSubmit(event) {
         event.preventDefault();
         console.log("Email sent successfully");
         // Clear the form fields
-        setName ("");
+        setName("");
         setSubject("");
         setMessage("");
-    };
+    }
 
     return (
         <div>
@@ -52,6 +80,10 @@ export default function ContactBody() {
                 </div>
                 {/* create a form that will email honeebee or butterfly */}
                 {/* insert a dropdown with HoneeBee or Butterfly as the options */}
+                <div
+                    id="map"
+                    className="flex flex-col justify-center mx-[700px] h-[250px] my-[15px]"
+                ></div>
 
                 <form
                     className="flex flex-col justify-center w-[40%] p-2 mx-[32%] bg-slate-400 rounded-lg shadow-lg shadow-slate-500"
@@ -95,7 +127,6 @@ export default function ContactBody() {
                         className="m-[2%]"
                         value={subject}
                         onChange={handleSubjectChange}
-                    
                     />
 
                     <textarea
@@ -111,7 +142,9 @@ export default function ContactBody() {
                         type="submit"
                         className="bg-slate-300 w-[15%] items-center rounded-md mx-[42.5%] mb-[2.5%]"
                     >
-                        <a href={`mailto:${email}?subject:${subject}&body:${message}`}></a>
+                        <a
+                            href={`mailto:${email}?subject:${subject}&body:${message}`}
+                        ></a>
                         Submit
                     </button>
                 </form>
